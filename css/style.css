@@ -1,0 +1,147 @@
+* {
+  margin: 0px;
+}
+
+body {
+  background-image: url("https://cdn.wallpapersafari.com/90/21/4U8iAc.jpg");
+}
+
+.headerTask {
+  text-align: center;
+  padding-bottom: 15px;
+  clip-path: polygon(2% 0%, 0% 100%, 100% 100%, 96% 10%);
+  opacity: 0.85;
+  border-bottom: 5px solid white;
+}
+
+h3 {
+  margin: 10px;
+  font-family: "Lucida Console", Monaco, monospace;
+  user-select: none;
+}
+
+label {
+  user-select: none;
+}
+
+.headerTask>h3 {
+  margin-top: 0px;
+  padding: 10px;
+  font-size: 1.5em;
+  color: black;
+  line-height: 40px;
+  text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+
+.headerTask:hover .btnDeleteGroup {
+  visibility: visible;
+}
+
+.task {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: rgba(0, 0, 0, 0.822);
+  color: white;
+}
+
+.task:hover {
+  background-color: rgba(182, 99, 4, 0.9);
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.deleteBtn {
+  float: right;
+}
+
+.deleteBtn:hover {
+  cursor: pointer;
+}
+
+.btnDeleteGroup {
+  font-size: 18px;
+  color: white;
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.finishedTask {
+  background-color: rgba(0, 0, 0, 0.60);
+  color: grey;
+  text-decoration: line-through;
+
+}
+
+.groupTask {
+  min-width: 400px;
+}
+
+#container {
+  margin: 40px 20px;
+  display: flex;
+  flex-flow: row;
+  gap: 30px;
+  justify-content: flex-start;
+  margin-top: 150px;
+}
+
+#header {
+  text-align: center;
+  width: 100%;
+  color: white;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border-bottom: 5px solid rgba(255, 255, 255, .8);
+  position: fixed;
+  top: 0;
+}
+
+#header input[type="text"] {
+  width: 30%;
+  padding: 6px;
+}
+
+/*Button*/
+
+.button_slide {
+  color: #FFF;
+  border: 2px solid rgb(216, 2, 134);
+  border-radius: 0px;
+  padding: 7px 15px;
+  display: inline-block;
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-left: 10px;
+  box-shadow: inset 0 0 0 0 #D80286;
+  -webkit-transition: ease-out 0.4s;
+  -moz-transition: ease-out 0.4s;
+  transition: ease-out 0.4s;
+  user-select: none;
+}
+
+.button_slide2 {
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgb(216, 2, 134);
+  border-radius: 0px;
+  padding: 5px 12px;
+  display: inline-block;
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  margin-left: 10px;
+  box-shadow: inset 0 0 0 0 #D80286;
+  -webkit-transition: ease-out 0.4s;
+  -moz-transition: ease-out 0.4s;
+  transition: ease-out 0.4s;
+  user-select: none;
+}
+
+.slide_right:hover {
+  box-shadow: inset 400px 0 0 0 #D80286;
+}
