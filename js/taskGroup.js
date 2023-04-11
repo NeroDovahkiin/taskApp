@@ -34,4 +34,8 @@ class taskGroup {
     setTasks(arrayTasks) {
         this.tasks = arrayTasks;
     }
+
+    modifyTask(index, newText){
+        this.tasks[index].name = newText;
+    }
 }

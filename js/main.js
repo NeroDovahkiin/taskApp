@@ -7,6 +7,12 @@ loadLocalStorage();
 
 const colors = ["tomato", "Aquamarine", "blue", "Brown", "Chartreuse", "CornFlowerBlue", "DarkSlateBlue", "DarkTurquoise", "DodgerBlue", "Gray", "GreenYellow", "DarkSlateGray", "Gold", "FireBrick", "Indigo", "Salmon", "SeaGreen"];
 
+//actualizo localStorage
+function refreshStorage() {
+    localStorage.clear();
+    addLocalStorage(taskGroups);
+}
+
 window.onload = function () {
 
     const btnNewTaskGroup = document.getElementById('btnAddNewTaskGroup');
@@ -52,7 +58,7 @@ const createVisualTaskGroup = (name, index) => {
     visualGroupTask.setAttribute("class", "groupTask");
     visualGroupTask.innerHTML = `
     <div class="headerTask" style="background-color: ${getRandomColor()}">
-     <h3> ${name} <span class="btnDeleteGroup" onclick="deleteGroupTask(this)"><i class="fas fa-trash-alt"></i></span></h3>
+     <h3> ${name} <span class="btnDeleteGroup" onclick="deleteGroupTask(this)" title="Delete this TaskGroup"><i class="fas fa-trash-alt"></i></span></h3>
         <div>
             <input type="text" id="text-${index}">
             <div onclick="addVisualTask(this)" class="button_slide2 slide_right"> ADD </div>
@@ -64,9 +70,7 @@ const createVisualTaskGroup = (name, index) => {
 
     divPrincipal.appendChild(visualGroupTask);
 
-    //actualizo localStorage
-    localStorage.clear();
-    addLocalStorage(taskGroups);
+    refreshStorage();
 
     // AGREGO EL EVENTO ENTER AL INPUT TEXT
     const textBox = document.getElementById("text-" + index);
@@ -87,13 +91,24 @@ function deleteGroupTask(e) {
         const id = idFather.slice(idFather.lastIndexOf("-") + 1);
         taskGroups.splice(id, 1);
 
-        //actualizo localStorage
-        localStorage.clear();
-        addLocalStorage(taskGroups);
+        refreshStorage();
 
         // Eliminar el grupo visual
         document.getElementById("container").removeChild(document.getElementById("groupTask-" + id));
     }
+}
+
+// funcion para obtener la posición de la tarea a trabajar (llamada dentro de addVisualTask, this sería el span del boton presionado)
+// debe ser usada desde los botones dentro de cada tarea
+function getIndexOfThisTask(thisElement) {
+    // cuento cuantas task hacia arriba tiene para obtener la posicion
+    let targetTask = thisElement.parentElement.parentElement;
+    let i = 0;
+    while (targetTask.previousElementSibling != null) {
+        targetTask = targetTask.previousElementSibling;
+        i++;
+    }
+    return i;
 }
 
 
@@ -144,8 +159,10 @@ const addVisualTask = (e, hardCodeNameTask, completed) => {
              <input type="checkbox" class="cbkTask">
              <label>${taskText}</label>
              <div class="deleteBtn">
-                <span style="padding-right: 8px;"><i class="far fa-edit"></i></span>
-                <span class="deleteBtn"><i class="fas fa-trash-alt"></i></span>
+             <span class="finishBtn noDisplay" title="Save Task" style="padding-right: 8px;"><i class="fas fa-floppy-disk"></i></span>
+                <span style="padding-right: 8px;" class="modifyBtn" title="Modify"><i class="far fa-edit"></i></span>
+                <span class="deleteBtn" title="Delete"><i class="fas fa-trash-alt"></i></span>
+                <br>
             </div>
          `;
 
@@ -156,9 +173,7 @@ const addVisualTask = (e, hardCodeNameTask, completed) => {
             task.setAttribute("class", "task finishedTask");
         }
 
-        //actualizo localStorage
-        localStorage.clear();
-        addLocalStorage(taskGroups);
+        refreshStorage();
 
         // ----------- TACHADO DEL TEXTO --------------
 
@@ -176,7 +191,6 @@ const addVisualTask = (e, hardCodeNameTask, completed) => {
                 taskToComplete = taskToComplete.previousElementSibling;
                 i++;
             }
-            //console.log(i);
             // obtengo el string id del groupTask
             const stringGroupTask = this.parentNode.parentNode.parentNode.getAttribute("id");
 
@@ -200,17 +214,9 @@ const addVisualTask = (e, hardCodeNameTask, completed) => {
         });
 
         // obtengo el span con clase deleteBtn y le agrego el evento eliminar
-        const deleteBtn = bodyGroup.lastChild.lastElementChild.lastElementChild;
-
+        const deleteBtn = bodyGroup.lastChild.lastElementChild.getElementsByTagName('span')[2];
+        console.log(deleteBtn);
         deleteBtn.addEventListener("click", function () {
-
-            // cuento cuantas task hacia arriba tiene para obtener la posicion
-            let taskToDelete = this.parentElement.parentElement;
-            let i = 0;
-            while (taskToDelete.previousElementSibling != null) {
-                taskToDelete = taskToDelete.previousElementSibling;
-                i++;
-            }
 
             // obtengo el string id del groupTask
             const stringGroupTask = this.parentNode.parentNode.parentNode.parentNode.getAttribute("id");
@@ -218,14 +224,50 @@ const addVisualTask = (e, hardCodeNameTask, completed) => {
             // obtengo solo el id del string
             const idGroupTask = stringGroupTask.slice(stringGroupTask.lastIndexOf("-") + 1);
 
-            taskGroups[parseInt(idGroupTask)].deleteTask(i);
+            taskGroups[parseInt(idGroupTask)].deleteTask(getIndexOfThisTask(this));
 
-            //actualizo localStorage
-            localStorage.clear();
-            addLocalStorage(taskGroups);
+            refreshStorage();
 
             // elimino la task del dom
             bodyGroup.removeChild(this.parentElement.parentElement);
+        });
+
+        // botón MODIFICAR tarea
+        const modifyBtn = bodyGroup.lastChild.lastElementChild.firstElementChild.nextElementSibling;
+        const saveTextBtn = bodyGroup.lastChild.lastElementChild.firstElementChild;
+
+        modifyBtn.addEventListener("click", function () {
+
+            saveTextBtn.classList.remove("noDisplay");
+            modifyBtn.classList.add("noDisplay");
+
+            // obtengo el string id del groupTask
+            const stringGroupTask = this.parentNode.parentNode.parentNode.parentNode.getAttribute("id");
+
+            // obtengo solo el id del string
+            const idGroupTask = stringGroupTask.slice(stringGroupTask.lastIndexOf("-") + 1);
+
+            console.log("Grupo " + idGroupTask);
+
+            // texto nuevo
+            const thisTask = modifyBtn.parentElement.parentElement.getElementsByTagName('label')[0];
+            thisTask.setAttribute("contentEditable", "true");
+            thisTask.focus();
+
+            function saveNewText() {
+                thisTask.setAttribute("contentEditable", "false");
+                saveTextBtn.classList.add("noDisplay");
+                modifyBtn.classList.remove("noDisplay");
+
+                //TODO: modifico la tarea y actualizo el localStorage
+                const taskText = thisTask.innerText;
+                taskGroups[parseInt(idGroupTask)].modifyTask(getIndexOfThisTask(this), taskText);
+                refreshStorage();
+
+            }
+            console.log(saveTextBtn);
+            saveTextBtn.addEventListener("click", saveNewText);
+
         });
 
         // vacio el input text
@@ -264,7 +306,3 @@ function loadVisualGroups() {
 
 // dibujo los grupos de tarea a partir del localStorage
 loadVisualGroups();
-
-
-
-
